@@ -2,26 +2,32 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.DriveSystem;
 
 public class Robot extends TimedRobot {
-    private RobotContainer m_robotContainer;
-    private final Joystick joy = new Joystick(0);
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem(joy);
-    private boolean a, b, x;
-    private double fixSpeed;
+    private DriveSystem driveSystem = new DriveSystem();
+    private RobotContainer RoboCont = new RobotContainer();
+    public Joystick joy = RoboCont.joy;
+
+    public int POV;
+    public double Jx, Jy, Jx2, Jy2, TriggerValue;
+    public boolean a, b, x;
+    public double velocity = 0.5;
 
     @Override
     public void robotInit() {
-        m_robotContainer = new RobotContainer(driveSubsystem, joy);
     }
 
     @Override
     public void robotPeriodic() {
-        driveSubsystem.SmartDashboard();
         CommandScheduler.getInstance().run();
+        SmartDashboard.putNumber("Magnitude", driveSystem.magnitude);
+        SmartDashboard.putNumber("Vel esq.", driveSystem.Lspeed);
+        SmartDashboard.putNumber("Vel dir.", driveSystem.Rspeed);
+        SmartDashboard.putNumber("Quad.", driveSystem.getQuad(Jx, Jy));
+        SmartDashboard.putNumber("POV.", POV);
     }
 
     @Override
@@ -29,7 +35,33 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        driveSubsystem.setPOV(joy.getPOV());
-        driveSubsystem.setMotorSpeeds();
+        TriggerValue = joy.getRawAxis(2) - joy.getRawAxis(3);
+        Jx = driveSystem.Deadzone(joy.getRawAxis(0));
+        Jy = driveSystem.Deadzone(-joy.getRawAxis(1));
+        Jx2 = driveSystem.Deadzone(-joy.getRawAxis(4));
+        Jy2 = driveSystem.Deadzone(joy.getRawAxis(5));
+
+        a = joy.getRawButton(1);
+        b = joy.getRawButton(2);
+        x = joy.getRawButton(3);
+
+        if (a) velocity = 0.5;
+        if (b) velocity = 0.25;
+        if (x) velocity = 1;
+
+        POV = joy.getPOV();
+
+        int quad = driveSystem.getQuad(Jx, Jy);
+        driveSystem.POV(POV);
+
+        if (POV == -1) {
+            driveSystem.JoySpeed(Jx, Jy, quad, TriggerValue);
+        }
+
+        if ((Jx != 0 || Jx2 != 0 ) && (Jx == 0 && Jy == 0)) {
+            driveSystem.JoySpeed(Jx2, Jy2, quad, TriggerValue);
+        }
+
+        driveSystem.set(driveSystem.R_motor1, driveSystem.L_motor1, velocity);
     }
 }
