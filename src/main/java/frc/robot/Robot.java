@@ -4,12 +4,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.DriveSystem;
 
 public class Robot extends TimedRobot {
-    private DriveSystem driveSystem = new DriveSystem();
     private RobotContainer RoboCont = new RobotContainer();
     public Joystick joy = RoboCont.joy;
+    private DriveSystem driveSystem = new DriveSystem();
 
     public int POV;
     public double Jx, Jy, Jx2, Jy2, TriggerValue;
@@ -23,6 +22,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+
         SmartDashboard.putNumber("Magnitude", driveSystem.magnitude);
         SmartDashboard.putNumber("Vel esq.", driveSystem.Lspeed);
         SmartDashboard.putNumber("Vel dir.", driveSystem.Rspeed);
@@ -31,7 +31,8 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+    }
 
     @Override
     public void teleopPeriodic() {

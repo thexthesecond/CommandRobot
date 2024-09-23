@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSystem extends SubsystemBase {
     // Sistema de locomoção do robô
 
-    public VictorSPX L_motor1 = new VictorSPX(0);
-    public VictorSPX L_motor2 = new VictorSPX(0);
-    public VictorSPX R_motor1 = new VictorSPX(0);
-    public VictorSPX R_motor2 = new VictorSPX(0);
+    public VictorSPX L_motor1 = new VictorSPX(Constants.PortConst.L_MOTOR1_PORT);
+    public VictorSPX L_motor2 = new VictorSPX(Constants.PortConst.L_MOTOR2_PORT);
+    public VictorSPX R_motor1 = new VictorSPX(Constants.PortConst.R_MOTOR1_PORT);
+    public VictorSPX R_motor2 = new VictorSPX(Constants.PortConst.R_MOTOR2_PORT);
 
     public double Lspeed, Rspeed, rad, magnitude;
 
@@ -19,7 +19,8 @@ public class DriveSystem extends SubsystemBase {
         if (Math.abs(val) > 0.04) return val;
         else return 0;
     }
-    
+
+
     public DriveSystem() {
         R_motor1.setInverted(true);
         L_motor1.setInverted(false);
